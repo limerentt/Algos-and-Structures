@@ -1,73 +1,85 @@
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-using ld = long double;
-static const ld eps = 1e-4;
+#include <cmath>
+#include <iomanip>
+#include <iostream>
+#include <vector>
 
+static const int kOuputPrecision = 10;
+static const double kEps = 1e-4;
+static const double kPi = 3.14159265358979323846;
 
-class v {
+class V {
 public:
-    ld x, y;
+  double x, y;
 
-    v() = default;
-    v(ld xx, ld yy): x(xx), y(yy) {}
-    v(ld lx, ld ly, ld rx, ld ry) {
-        x = rx - lx;
-        y = ry - ly;
-    }
-    ld len() { return sqrt(x * x + y * y); }
-    ld vec_prod(v a) { return x * a.y - y * a.x; }
-    ld dot_prod(v a) { return x * a.x + y * a.y; }
+  V() = default;
+  V(double xx, double yy) : x(xx), y(yy) {}
+  V(double lx, double ly, double rx, double ry) {
+    x = rx - lx;
+    y = ry - ly;
+  }
+  double len() const {
+    return std::sqrt(x * x + y * y);
+  }
+  double vecProd(V a) const {
+    return x * a.y - y * a.x;
+  }
+  double dotProd(V a) const {
+    return x * a.x + y * a.y;
+  }
 };
 
-void where(v vertex, const vector<v>& p) {
-    ld angle = 0;
-    ll n = p.size();
-    for (ll i = 0; i < n; ++i) {
-        ll j = (i + 1) % n;
+void where(V vertex, const std::vector<V>& p) {
+  double angle = 0;
+  int n = p.size();
+  for (int i = 0; i < n; ++i) {
+    int j = (i + 1) % n;
 
-        v a(p[i].x - vertex.x, p[i].y - vertex.y);
-        v b(p[j].x - vertex.x, p[j].y - vertex.y);
+    V a(p[i].x - vertex.x, p[i].y - vertex.y);
+    V b(p[j].x - vertex.x, p[j].y - vertex.y);
 
-        ld vi_len = a.len();
-        ld vj_len = b.len();
-        ld vector_product = a.vec_prod(b);
+    double vi_len = a.len();
+    double vj_len = b.len();
+    double vector_product = a.vecProd(b);
 
-        ld local_sin = vector_product / (vi_len * vj_len);
+    double local_sin = vector_product / (vi_len * vj_len);
+    double local_angle = asin(local_sin);
+    double dot_product = a.dotProd(b);
 
-        ld local_angle = asin(local_sin);
-
-        ld dot_product = a.dot_prod(b);
-
-        if (vector_product == 0 && dot_product <= 0) {
-            cout << "BOUNDARY" << '\n';
-            return;
-        }
-
-        if (dot_product < 0)
-            local_angle = (local_angle > 0 ? 1 : -1) * numbers::pi - local_angle;
-
-        angle += local_angle;
+    if (vector_product == 0 && dot_product <= 0) {
+      std::cout << "BOUNDARY" << '\n';
+      return;
     }
 
-    if (abs(angle) <= eps) cout << "OUTSIDE" << '\n';
-    else cout << "INSIDE" << '\n';
+    if (dot_product < 0) {
+      local_angle = (local_angle > 0 ? 1 : -1) * kPi - local_angle;
+    }
+
+    angle += local_angle;
+  }
+
+  if (std::abs(angle) <= kEps) {
+    std::cout << "OUTSIDE" << '\n';
+  } else {
+    std::cout << "INSIDE" << '\n';
+  }
 }
 
 int main() {
-    cout << setprecision(10);
-    ll n, m;
-    cin >> n >> m;
-    vector<v> p(n);
+  std::cout << std::setprecision(kOuputPrecision);
 
-    for (ll i = 0; i < n; ++i) {
-        cin >> p[i].x;
-        cin >> p[i].y;
-    }
+  int n;
+  int m;
+  std::cin >> n >> m;
+  std::vector<V> p(n);
 
-    v vertex;
-    while (m--) {
-        cin >> vertex.x >> vertex.y;
-        where(vertex, p);
-    }
+  for (int i = 0; i < n; ++i) {
+    std::cin >> p[i].x;
+    std::cin >> p[i].y;
+  }
+
+  V vertex;
+  while ((m--) != 0) {
+    std::cin >> vertex.x >> vertex.y;
+    where(vertex, p);
+  }
 }
